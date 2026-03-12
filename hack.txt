@@ -1,77 +1,57 @@
--- Chờ game và player load
+-- chờ game load
 repeat task.wait() until game:IsLoaded()
 repeat task.wait() until game.Players.LocalPlayer
 
-local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
+-- load thư viện
+local Fluent = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/dawid-scripts/Fluent/main/source.lua"))()
 
--- Load Rayfield UI
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local SaveManager = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/dawid-scripts/Fluent/main/Addons/SaveManager.lua"))()
 
--- Tạo cửa sổ hub
-local Window = Rayfield:CreateWindow({
-    Name = "Kẻ Phản Diện Hub",
-    LoadingTitle = "Kẻ Phản Diện Hub",
-    LoadingSubtitle = "Menu Style Maru Hub",
-    ConfigurationSaving = {
-        Enabled = false
-    },
-    KeySystem = false
-})
+local InterfaceManager = loadstring(game:HttpGet(
+"https://raw.githubusercontent.com/dawid-scripts/Fluent/main/Addons/InterfaceManager.lua"))()
 
--- Tabs
-local MainTab = Window:CreateTab("Main", 4483362458)
-local FarmTab = Window:CreateTab("Farm", 4483362458)
-local TeleportTab = Window:CreateTab("Teleport", 4483362458)
-local PlayerTab = Window:CreateTab("Player", 4483362458)
-local SettingTab = Window:CreateTab("Setting", 4483362458)
-
--- Thông báo
-Rayfield:Notify({
+-- tạo cửa sổ
+local Window = Fluent:CreateWindow({
     Title = "Kẻ Phản Diện Hub",
-    Content = "Menu đã tải thành công!",
-    Duration = 5
+    SubTitle = "Menu Tiếng Việt",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(520,380),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
 })
 
--- Nút test
-MainTab:CreateButton({
-    Name = "Test Menu",
-    Callback = function()
-        print("Hub đang hoạt động")
-    end
-})
-repeat task.wait() until game.Players.LocalPlayer
-repeat task.wait() until game:IsLoaded()
-repeat task.wait() until game.Players.LocalPlayer
+-- tab menu
+local TrangChu = Window:AddTab({Title = "Trang Chủ"})
+local Raid = Window:AddTab({Title = "Raid"})
+local Farm = Window:AddTab({Title = "Farm"})
+local NguoiChoi = Window:AddTab({Title = "Người Chơi"})
+local CaiDat = Window:AddTab({Title = "Cài Đặt"})
 
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-
-local Window = Rayfield:CreateWindow({
-    Name = "Kẻ Phản Diện Hub",
-    LoadingTitle = "Kẻ Phản Diện Hub",
-    LoadingSubtitle = "Style Maru Hub",
-    ConfigurationSaving = {
-        Enabled = false
-    },
-    KeySystem = false
-})
-
--- Tab có icon giống Maru
-local MainTab = Window:CreateTab("Main", 7734068321)
-local FarmTab = Window:CreateTab("Farm", 7734068321)
-local TeleportTab = Window:CreateTab("Teleport", 7734068321)
-local PlayerTab = Window:CreateTab("Player", 7734068321)
-local SettingTab = Window:CreateTab("Setting", 7734068321)
-
-Rayfield:Notify({
+-- nội dung
+TrangChu:AddParagraph({
     Title = "Kẻ Phản Diện Hub",
-    Content = "Menu đã bật!",
-    Duration = 4
+    Content = "Menu đang hoạt động."
 })
 
-MainTab:CreateButton({
-    Name = "Test Hub",
-    Callback = function()
-        print("Hub đang chạy")
-    end
+Raid:AddParagraph({
+    Title = "Raid",
+    Content = "Chức năng sẽ thêm sau."
 })
+
+Farm:AddParagraph({
+    Title = "Farm",
+    Content = "Chức năng sẽ thêm sau."
+})
+
+-- setup manager
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+InterfaceManager:BuildInterfaceSection(CaiDat)
+SaveManager:BuildConfigSection(CaiDat)
+
+-- khởi động UI
+Fluent:Init()
