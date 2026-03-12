@@ -41,3 +41,37 @@ MainTab:CreateButton({
     end
 })
 repeat task.wait() until game.Players.LocalPlayer
+repeat task.wait() until game:IsLoaded()
+repeat task.wait() until game.Players.LocalPlayer
+
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "Kẻ Phản Diện Hub",
+    LoadingTitle = "Kẻ Phản Diện Hub",
+    LoadingSubtitle = "Style Maru Hub",
+    ConfigurationSaving = {
+        Enabled = false
+    },
+    KeySystem = false
+})
+
+-- Tab có icon giống Maru
+local MainTab = Window:CreateTab("Main", 7734068321)
+local FarmTab = Window:CreateTab("Farm", 7734068321)
+local TeleportTab = Window:CreateTab("Teleport", 7734068321)
+local PlayerTab = Window:CreateTab("Player", 7734068321)
+local SettingTab = Window:CreateTab("Setting", 7734068321)
+
+Rayfield:Notify({
+    Title = "Kẻ Phản Diện Hub",
+    Content = "Menu đã bật!",
+    Duration = 4
+})
+
+MainTab:CreateButton({
+    Name = "Test Hub",
+    Callback = function()
+        print("Hub đang chạy")
+    end
+})
