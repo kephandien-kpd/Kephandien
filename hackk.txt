@@ -1,4 +1,3 @@
--- Anti Kick / Anti Ban cơ bản
 
 local mt = getrawmetatable(game)
 local old = mt.__namecall
@@ -30,8 +29,6 @@ while task.wait(1) do
         -- code của bạn ở đây
     end
 end
--- Toggle Logo Quạ (bản sửa lỗi)
-
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 
@@ -47,10 +44,10 @@ toggle.Parent = gui
 toggle.Size = UDim2.new(0,70,0,70)
 toggle.Position = UDim2.new(0,20,0.5,0)
 toggle.BackgroundTransparency = 1
-toggle.Image = "rbxassetid://1234567890" -- thay ID ảnh quạ
+toggle.Image = "rbxassetid://7072719339" -- ảnh quạ
 toggle.Active = true
 
--- hệ thống kéo
+-- kéo toggle
 local dragging = false
 local dragStart
 local startPos
@@ -65,18 +62,19 @@ end
 end)
 
 toggle.InputChanged:Connect(function(input)
-if input.UserInputType == Enum.UserInputType.MouseMovement
-or input.UserInputType == Enum.UserInputType.Touch then
-if dragging then
-local delta = input.Position - dragStart
-toggle.Position = UDim2.new(
-startPos.X.Scale,
-startPos.X.Offset + delta.X,
-startPos.Y.Scale,
-startPos.Y.Offset + delta.Y
-)
+if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+or input.UserInputType == Enum.UserInputType.Touch) then
+
+	local delta = input.Position - dragStart
+	
+	toggle.Position = UDim2.new(
+		startPos.X.Scale,
+		startPos.X.Offset + delta.X,
+		startPos.Y.Scale,
+		startPos.Y.Offset + delta.Y
+	)
 end
-end
+
 end)
 
 toggle.InputEnded:Connect(function(input)
