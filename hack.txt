@@ -1,57 +1,31 @@
--- chờ game load
-repeat task.wait() until game:IsLoaded()
-repeat task.wait() until game.Players.LocalPlayer
+-- Tạo GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
+ScreenGui.Name = "KePhanDienHub"
 
--- load thư viện
-local Fluent = loadstring(game:HttpGet(
-"https://raw.githubusercontent.com/dawid-scripts/Fluent/main/source.lua"))()
+-- MENU
+local Frame = Instance.new("Frame")
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0,300,0,200)
+Frame.Position = UDim2.new(0.35,0,0.3,0)
+Frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+Frame.Visible = false
 
-local SaveManager = loadstring(game:HttpGet(
-"https://raw.githubusercontent.com/dawid-scripts/Fluent/main/Addons/SaveManager.lua"))()
+-- NÚT TRÒN TOGGLE
+local Toggle = Instance.new("TextButton")
+Toggle.Parent = ScreenGui
+Toggle.Size = UDim2.new(0,50,0,50)
+Toggle.Position = UDim2.new(0.02,0,0.4,0)
+Toggle.BackgroundColor3 = Color3.fromRGB(255,170,0)
+Toggle.Text = "≡"
+Toggle.TextScaled = true
 
-local InterfaceManager = loadstring(game:HttpGet(
-"https://raw.githubusercontent.com/dawid-scripts/Fluent/main/Addons/InterfaceManager.lua"))()
+-- Bo tròn nút
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(1,0)
+UICorner.Parent = Toggle
 
--- tạo cửa sổ
-local Window = Fluent:CreateWindow({
-    Title = "Kẻ Phản Diện Hub",
-    SubTitle = "Menu Tiếng Việt",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(520,380),
-    Acrylic = true,
-    Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.LeftControl
-})
-
--- tab menu
-local TrangChu = Window:AddTab({Title = "Trang Chủ"})
-local Raid = Window:AddTab({Title = "Raid"})
-local Farm = Window:AddTab({Title = "Farm"})
-local NguoiChoi = Window:AddTab({Title = "Người Chơi"})
-local CaiDat = Window:AddTab({Title = "Cài Đặt"})
-
--- nội dung
-TrangChu:AddParagraph({
-    Title = "Kẻ Phản Diện Hub",
-    Content = "Menu đang hoạt động."
-})
-
-Raid:AddParagraph({
-    Title = "Raid",
-    Content = "Chức năng sẽ thêm sau."
-})
-
-Farm:AddParagraph({
-    Title = "Farm",
-    Content = "Chức năng sẽ thêm sau."
-})
-
--- setup manager
-SaveManager:SetLibrary(Fluent)
-InterfaceManager:SetLibrary(Fluent)
-
-InterfaceManager:BuildInterfaceSection(CaiDat)
-SaveManager:BuildConfigSection(CaiDat)
-
--- khởi động UI
-Fluent:Init()
+-- Toggle mở / đóng menu
+Toggle.MouseButton1Click:Connect(function()
+	Frame.Visible = not Frame.Visible
+end)
