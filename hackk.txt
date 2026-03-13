@@ -83,3 +83,82 @@ or input.UserInputType == Enum.UserInputType.Touch then
 dragging = false
 end
 end)
+-- KẺ PHẢN DIỆN HUB (UI giống Maru - logo quạ)
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "KPD_HUB"
+gui.ResetOnSpawn = false
+gui.Parent = game.CoreGui
+
+-- MAIN FRAME
+local main = Instance.new("Frame")
+main.Parent = gui
+main.Size = UDim2.new(0,520,0,320)
+main.Position = UDim2.new(0.3,0,0.25,0)
+main.BackgroundColor3 = Color3.fromRGB(30,30,35)
+main.Active = true
+main.Draggable = true
+
+-- TITLE
+local title = Instance.new("TextLabel")
+title.Parent = main
+title.Size = UDim2.new(1,0,0,40)
+title.BackgroundTransparency = 1
+title.Text = "KẺ PHẢN DIỆN HUB | BLOX FRUITS"
+title.TextColor3 = Color3.fromRGB(255,255,255)
+title.TextScaled = true
+
+-- LOGO QUẠ
+local logo = Instance.new("ImageLabel")
+logo.Parent = main
+logo.Size = UDim2.new(0,120,0,120)
+logo.Position = UDim2.new(0,10,0,60)
+logo.BackgroundTransparency = 1
+logo.Image = "rbxassetid://7072719339"
+
+-- MENU BUTTON FARM
+local farm = Instance.new("TextButton")
+farm.Parent = main
+farm.Size = UDim2.new(0,220,0,40)
+farm.Position = UDim2.new(0.45,0,0.25,0)
+farm.BackgroundColor3 = Color3.fromRGB(45,45,50)
+farm.Text = "Auto Farm"
+farm.TextColor3 = Color3.fromRGB(255,255,255)
+farm.TextScaled = true
+
+-- MENU BUTTON RAID
+local raid = Instance.new("TextButton")
+raid.Parent = main
+raid.Size = UDim2.new(0,220,0,40)
+raid.Position = UDim2.new(0.45,0,0.45,0)
+raid.BackgroundColor3 = Color3.fromRGB(45,45,50)
+raid.Text = "Auto Raid"
+raid.TextColor3 = Color3.fromRGB(255,255,255)
+raid.TextScaled = true
+
+-- MENU BUTTON TELEPORT
+local tp = Instance.new("TextButton")
+tp.Parent = main
+tp.Size = UDim2.new(0,220,0,40)
+tp.Position = UDim2.new(0.45,0,0.65,0)
+tp.BackgroundColor3 = Color3.fromRGB(45,45,50)
+tp.Text = "Teleport"
+tp.TextColor3 = Color3.fromRGB(255,255,255)
+tp.TextScaled = true
+
+-- TOGGLE LOGO QUẠ
+local toggle = Instance.new("ImageButton")
+toggle.Parent = gui
+toggle.Size = UDim2.new(0,70,0,70)
+toggle.Position = UDim2.new(0,20,0.5,0)
+toggle.BackgroundTransparency = 1
+toggle.Image = "rbxassetid://7072719339"
+
+toggle.MouseButton1Click:Connect(function()
+main.Visible = not main.Visible
+end)
