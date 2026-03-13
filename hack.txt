@@ -1,69 +1,28 @@
--- Tạo GUI
+-- Toggle Logo Quạ
 local ScreenGui = Instance.new("ScreenGui")
+local Toggle = Instance.new("ImageButton")
+
 ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "KePhanDienHub"
 
--- MENU
-local Frame = Instance.new("Frame")
-Frame.Parent = ScreenGui
-Frame.Size = UDim2.new(0,300,0,200)
-Frame.Position = UDim2.new(0.35,0,0.3,0)
-Frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
-Frame.Visible = false
-
--- NÚT TOGGLE (logo)
-Toggle.Image = "rbxassetid://123456789"
 Toggle.Parent = ScreenGui
-Toggle.Size = UDim2.new(0,60,0,60)
-Toggle.Position = UDim2.new(0.02,0,0.4,0)
+Toggle.Size = UDim2.new(0,70,0,70)
+Toggle.Position = UDim2.new(0,20,0.5,0)
 Toggle.BackgroundTransparency = 1
-Toggle.Image = "rbxassetid://0" -- thay ID ảnh logo của bạn
+Toggle.Image = "rbxassetid://ID_ANH_QUA" -- thay id ảnh
+Toggle.Active = true
+Toggle.Draggable = true
 
--- Bấm mở / đóng menu
-Toggle.MouseButton1Click:Connect(function()
-	Frame.Visible = not Frame.Visible
-end)
+local menu = nil
 
--- KÉO NÚT (Drag)
-local UIS = game:GetService("UserInputService")
-
-local dragging
-local dragInput
-local dragStart
-local startPos
-
-local function update(input)
-	local delta = input.Position - dragStart
-	Toggle.Position = UDim2.new(
-		startPos.X.Scale,
-		startPos.X.Offset + delta.X,
-		startPos.Y.Scale,
-		startPos.Y.Offset + delta.Y
-	)
+-- tìm menu hub
+for _,v in pairs(game.CoreGui:GetChildren()) do
+    if v:IsA("ScreenGui") and v.Name ~= ScreenGui.Name then
+        menu = v
+    end
 end
 
-Toggle.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = true
-		dragStart = input.Position
-		startPos = Toggle.Position
-
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				dragging = false
-			end
-		end)
-	end
-end)
-
-Toggle.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement then
-		dragInput = input
-	end
-end)
-
-UIS.InputChanged:Connect(function(input)
-	if input == dragInput and dragging then
-		update(input)
-	end
+Toggle.MouseButton1Click:Connect(function()
+    if menu then
+        menu.Enabled = not menu.Enabled
+    end
 end)
