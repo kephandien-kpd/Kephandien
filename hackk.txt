@@ -1,0 +1,87 @@
+-- Anti Kick / Anti Ban cơ bản
+
+local mt = getrawmetatable(game)
+local old = mt.__namecall
+setreadonly(mt,false)
+
+mt.__namecall = newcclosure(function(self,...)
+local method = getnamecallmethod()
+if tostring(method) == "Kick" then
+return wait(9e9)
+end
+return old(self,...)
+end)
+
+setreadonly(mt,true)
+
+-- chống bị kick LocalPlayer
+game.Players.LocalPlayer.Kick = function()
+return wait(9e9)
+end
+while task.wait(1) do
+    local player = game.Players.LocalPlayer
+    if player and player.Character then
+        print("Script đang chạy")
+    end
+end
+while task.wait(1) do
+    local player = game.Players.LocalPlayer
+    if player and player.Character then
+        -- code của bạn ở đây
+    end
+end
+-- Toggle Logo Quạ (bản sửa lỗi)
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "KPD_Toggle"
+gui.ResetOnSpawn = false
+gui.Parent = game.CoreGui
+
+local toggle = Instance.new("ImageButton")
+toggle.Parent = gui
+toggle.Size = UDim2.new(0,70,0,70)
+toggle.Position = UDim2.new(0,20,0.5,0)
+toggle.BackgroundTransparency = 1
+toggle.Image = "rbxassetid://1234567890" -- thay ID ảnh quạ
+toggle.Active = true
+
+-- hệ thống kéo
+local dragging = false
+local dragStart
+local startPos
+
+toggle.InputBegan:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1
+or input.UserInputType == Enum.UserInputType.Touch then
+dragging = true
+dragStart = input.Position
+startPos = toggle.Position
+end
+end)
+
+toggle.InputChanged:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseMovement
+or input.UserInputType == Enum.UserInputType.Touch then
+if dragging then
+local delta = input.Position - dragStart
+toggle.Position = UDim2.new(
+startPos.X.Scale,
+startPos.X.Offset + delta.X,
+startPos.Y.Scale,
+startPos.Y.Offset + delta.Y
+)
+end
+end
+end)
+
+toggle.InputEnded:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1
+or input.UserInputType == Enum.UserInputType.Touch then
+dragging = false
+end
+end)
