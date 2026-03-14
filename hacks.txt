@@ -1,0 +1,54 @@
+-- Tạo GUI
+local ScreenGui = Instance.new("ScreenGui")
+local Toggle = Instance.new("ImageButton")
+
+ScreenGui.Parent = game.CoreGui
+
+Toggle.Parent = ScreenGui
+Toggle.Size = UDim2.new(0,60,0,60)
+Toggle.Position = UDim2.new(0,100,0,200)
+Toggle.BackgroundTransparency = 1
+
+-- Ảnh con quạ (bạn có thể thay ID)
+Toggle.Image = "rbxassetid://1234567890"
+
+-- Kéo được
+local dragging = false
+local dragInput, mousePos, framePos
+
+Toggle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		mousePos = input.Position
+		framePos = Toggle.Position
+	end
+end)
+
+Toggle.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - mousePos
+		Toggle.Position = UDim2.new(
+			framePos.X.Scale,
+			framePos.X.Offset + delta.X,
+			framePos.Y.Scale,
+			framePos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+Toggle.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+-- Bật tắt menu
+local Menu = Instance.new("Frame")
+Menu.Parent = ScreenGui
+Menu.Size = UDim2.new(0,300,0,200)
+Menu.Position = UDim2.new(0.5,-150,0.5,-100)
+Menu.Visible = false
+
+Toggle.MouseButton1Click:Connect(function()
+	Menu.Visible = not Menu.Visible
+end)
