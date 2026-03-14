@@ -1,31 +1,57 @@
--- Toggle Logo Quạ (bản sửa lỗi)
-
+-- Tạo GUI
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "KPD_Toggle"
+local Toggle = Instance.new("ImageButton")
+
 ScreenGui.Parent = game.CoreGui
 
-local Toggle = Instance.new("ImageButton")
 Toggle.Parent = ScreenGui
-Toggle.Size = UDim2.new(0,70,0,70)
-Toggle.Position = UDim2.new(0,20,0.5,0)
+Toggle.Size = UDim2.new(0,60,0,60)
+Toggle.Position = UDim2.new(0,100,0,200)
 Toggle.BackgroundTransparency = 1
-Toggle.Image = "rbxassetid://ID_ANH_QUA" -- thay id ảnh
-Toggle.Active = true
-Toggle.Draggable = true
 
--- đợi menu load
-task.wait(3)
+-- ID ảnh con quạ
+Toggle.Image = "rbxassetid://1234567890"
 
-local Menu = nil
-for _,v in pairs(game.CoreGui:GetChildren()) do
-if v:IsA("ScreenGui") and v.Name ~= "KPD_Toggle" then
-Menu = v
-end
-end
+-- Kéo được
+local dragging = false
+local mousePos
+local framePos
 
--- Toggle menu
+Toggle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		mousePos = input.Position
+		framePos = Toggle.Position
+	end
+end)
+
+Toggle.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - mousePos
+		Toggle.Position = UDim2.new(
+			framePos.X.Scale,
+			framePos.X.Offset + delta.X,
+			framePos.Y.Scale,
+			framePos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+Toggle.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+-- Menu
+local Menu = Instance.new("Frame")
+Menu.Parent = ScreenGui
+Menu.Size = UDim2.new(0,300,0,200)
+Menu.Position = UDim2.new(0.5,-150,0.5,-100)
+Menu.BackgroundColor3 = Color3.fromRGB(25,25,25)
+Menu.Visible = false
+
+-- Bật tắt menu
 Toggle.MouseButton1Click:Connect(function()
-if Menu then
-Menu.Enabled = not Menu.Enabled
-end
+	Menu.Visible = not Menu.Visible
 end)
