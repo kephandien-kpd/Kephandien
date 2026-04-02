@@ -1,35 +1,26 @@
-local plr = game.Players.LocalPlayer
-local char = plr.Character or plr.CharacterAdded:Wait()
-local root = char:WaitForChild("HumanoidRootPart")
+local Players = game:GetService("Players")
 
--- Tự tìm bóng
-local function getBall()
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("Part") and v.Name:lower():find("ball") then
-            return v
+for _, v in pairs(Players:GetPlayers()) do
+    if v ~= Players.LocalPlayer and v.Character then
+        
+        local hrp = v.Character:FindFirstChild("HumanoidRootPart")
+        if hrp and not hrp:FindFirstChild("FakeHitbox") then
+            
+            local box = Instance.new("Part")
+            box.Size = Vector3.new(40,40,40)
+            box.Transparency = 1
+            box.CanCollide = false
+            box.Massless = true
+            box.Name = "FakeHitbox"
+            box.Parent = hrp
+            
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = box
+            weld.Part1 = hrp
+            weld.Parent = box
+            
+            box.CFrame = hrp.CFrame
         end
+        
     end
 end
-
-local ball = getBall()
-
--- HITBOX 40
-local hitbox = Instance.new("Part")
-hitbox.Size = Vector3.new(40,40,40)
-hitbox.Transparency = 1
-hitbox.CanCollide = false
-hitbox.Massless = true
-hitbox.Parent = char
-
-local weld = Instance.new("WeldConstraint")
-weld.Part0 = hitbox
-weld.Part1 = root
-weld.Parent = hitbox
-
--- AUTO THEO BÓNG
-game:GetService("RunService").Heartbeat:Connect(function()
-    ball = getBall()
-    if ball then
-        root.CFrame = root.CFrame:Lerp(CFrame.new(ball.Position.X, root.Position.Y, ball.Position.Z), 0.25)
-    end
-end)
