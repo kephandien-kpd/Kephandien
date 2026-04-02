@@ -1,0 +1,35 @@
+local plr = game.Players.LocalPlayer
+local char = plr.Character or plr.CharacterAdded:Wait()
+local root = char:WaitForChild("HumanoidRootPart")
+
+-- Tự tìm bóng
+local function getBall()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("Part") and v.Name:lower():find("ball") then
+            return v
+        end
+    end
+end
+
+local ball = getBall()
+
+-- HITBOX 40
+local hitbox = Instance.new("Part")
+hitbox.Size = Vector3.new(40,40,40)
+hitbox.Transparency = 1
+hitbox.CanCollide = false
+hitbox.Massless = true
+hitbox.Parent = char
+
+local weld = Instance.new("WeldConstraint")
+weld.Part0 = hitbox
+weld.Part1 = root
+weld.Parent = hitbox
+
+-- AUTO THEO BÓNG
+game:GetService("RunService").Heartbeat:Connect(function()
+    ball = getBall()
+    if ball then
+        root.CFrame = root.CFrame:Lerp(CFrame.new(ball.Position.X, root.Position.Y, ball.Position.Z), 0.25)
+    end
+end)
