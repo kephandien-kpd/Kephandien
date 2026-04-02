@@ -1,0 +1,33 @@
+local opponent = workspace:WaitForChild("Opponent")
+local root = opponent:WaitForChild("HumanoidRootPart")
+
+-- Biến bật/tắt
+local enabled = true
+
+-- Tạo hitbox
+local hitbox = Instance.new("Part")
+hitbox.Name = "Hitbox"
+hitbox.Size = Vector3.new(40,40,40)
+hitbox.Transparency = 1 -- 1 = ẩn hoàn toàn
+hitbox.CanCollide = false
+hitbox.Anchored = false
+hitbox.Massless = true
+hitbox.Parent = opponent
+
+-- Gắn vào người
+local weld = Instance.new("WeldConstraint")
+weld.Part0 = hitbox
+weld.Part1 = root
+weld.Parent = hitbox
+
+hitbox.CFrame = root.CFrame
+
+-- Toggle bằng phím (nhấn F)
+game:GetService("UserInputService").InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if input.KeyCode == Enum.KeyCode.F then
+        enabled = not enabled
+        hitbox.Size = enabled and Vector3.new(40,40,40) or Vector3.new(0,0,0)
+        print("Hitbox:", enabled and "ON" or "OFF")
+    end
+end)
