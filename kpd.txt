@@ -1,16 +1,27 @@
-local Players = game:GetService("Players")
+local hitboxSize = Vector3.new(35,35,35)
 
-for _, v in pairs(Players:GetPlayers()) do
-    if v ~= Players.LocalPlayer then
-        local char = v.Character
-        if char and char:FindFirstChild("HumanoidRootPart") then
-            
-            local hrp = char.HumanoidRootPart
-            
-            hrp.Size = Vector3.new(40,40,40) -- HITBOX 40
-            hrp.Transparency = 0.7 -- thấy hitbox (đổi 1 nếu muốn ẩn)
-            hrp.CanCollide = false
-            
-        end
+local function isShuttle(obj)
+    return obj:IsA("Part") 
+    and (obj.Name == "Shuttlecock" or obj.Name == "Shuttle" or obj.Name == "Ball")
+end
+
+local function applyHitbox(obj)
+    if isShuttle(obj) then
+        obj.Size = hitboxSize
+        obj.Transparency = 0.5
+        obj.Material = Enum.Material.Neon
+        obj.BrickColor = BrickColor.new("Really red")
+        obj.CanCollide = false
     end
 end
+
+-- Áp dụng cho cầu hiện tại
+for _, v in pairs(workspace:GetDescendants()) do
+    applyHitbox(v)
+end
+
+-- Khi cầu spawn lại vẫn có hitbox
+workspace.DescendantAdded:Connect(function(v)
+    task.wait(0.1)
+    applyHitbox(v)
+end)
