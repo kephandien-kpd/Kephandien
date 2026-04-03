@@ -1,26 +1,16 @@
 local Players = game:GetService("Players")
 
 for _, v in pairs(Players:GetPlayers()) do
-    if v ~= Players.LocalPlayer and v.Character then
-        
-        local hrp = v.Character:FindFirstChild("HumanoidRootPart")
-        if hrp and not hrp:FindFirstChild("FakeHitbox") then
+    if v ~= Players.LocalPlayer then
+        local char = v.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
             
-            local box = Instance.new("Part")
-            box.Size = Vector3.new(40,40,40)
-            box.Transparency = 1
-            box.CanCollide = false
-            box.Massless = true
-            box.Name = "FakeHitbox"
-            box.Parent = hrp
+            local hrp = char.HumanoidRootPart
             
-            local weld = Instance.new("WeldConstraint")
-            weld.Part0 = box
-            weld.Part1 = hrp
-            weld.Parent = box
+            hrp.Size = Vector3.new(40,40,40) -- HITBOX 40
+            hrp.Transparency = 0.7 -- thấy hitbox (đổi 1 nếu muốn ẩn)
+            hrp.CanCollide = false
             
-            box.CFrame = hrp.CFrame
         end
-        
     end
 end
