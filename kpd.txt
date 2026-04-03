@@ -1,28 +1,29 @@
-local mouse = game.Players.LocalPlayer:GetMouse()
-
-mouse.Button1Down:Connect(function()
-    local target = mouse.Target
-    if target then
-        print("Đã chọn:", target:GetFullName())
-
-        -- gán luôn làm quả cầu
-        getgenv().RealBall = target
-    end
-end)
-
--- ===== HITBOX =====
+getgenv().BallHitbox = true
 getgenv().BallSize = 40
+
+local function isShuttlecock(v)
+    return v:IsA("BasePart") and (
+        v.Name:lower():find("shuttle") or
+        v.Name:lower():find("cock") or
+        v.Name:lower():find("bird") or
+        v.Shape == Enum.PartType.Ball or
+        v.Size.Y > v.Size.X -- cầu lông thường dài hơn tròn
+    )
+end
 
 task.spawn(function()
     while true do
-        if getgenv().RealBall then
-            pcall(function()
-                local v = getgenv().RealBall
-                v.Size = Vector3.new(40,40,40)
-                v.Transparency = 0.2
-                v.Material = Enum.Material.Neon
-                v.CanCollide = false
-            end)
+        if getgenv().BallHitbox then
+            for _,v in pairs(workspace:GetDescendants()) do
+                if isShuttlecock(v) then
+                    pcall(function()
+                        v.Size = Vector3.new(40,40,40)
+                        v.Transparency = 0.2
+                        v.Material = Enum.Material.Neon
+                        v.CanCollide = false
+                    end)
+                end
+            end
         end
         task.wait()
     end
