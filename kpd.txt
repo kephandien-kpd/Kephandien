@@ -1,39 +1,28 @@
-getgenv().BallHitbox = true
-getgenv().BallSize = 40
+local mouse = game.Players.LocalPlayer:GetMouse()
 
-local function getBall()
-    local bestBall = nil
-    local maxSpeed = 0
+mouse.Button1Down:Connect(function()
+    local target = mouse.Target
+    if target then
+        print("Đã chọn:", target:GetFullName())
 
-    for _,v in pairs(workspace:GetDescendants()) do
-        if v:IsA("BasePart") then
-            local velocity = v.AssemblyLinearVelocity.Magnitude
-            
-            -- lọc vật di chuyển nhanh (giống quả cầu)
-            if velocity > 20 and v.Size.X < 10 then
-                if velocity > maxSpeed then
-                    maxSpeed = velocity
-                    bestBall = v
-                end
-            end
-        end
+        -- gán luôn làm quả cầu
+        getgenv().RealBall = target
     end
+end)
 
-    return bestBall
-end
+-- ===== HITBOX =====
+getgenv().BallSize = 40
 
 task.spawn(function()
     while true do
-        if getgenv().BallHitbox then
-            local ball = getBall()
-            if ball then
-                pcall(function()
-                    ball.Size = Vector3.new(getgenv().BallSize, getgenv().BallSize, getgenv().BallSize)
-                    ball.Transparency = 0.2
-                    ball.Material = Enum.Material.Neon
-                    ball.CanCollide = false
-                end)
-            end
+        if getgenv().RealBall then
+            pcall(function()
+                local v = getgenv().RealBall
+                v.Size = Vector3.new(40,40,40)
+                v.Transparency = 0.2
+                v.Material = Enum.Material.Neon
+                v.CanCollide = false
+            end)
         end
         task.wait()
     end
