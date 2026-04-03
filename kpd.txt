@@ -1,27 +1,90 @@
-local hitboxSize = Vector3.new(35,35,35)
+-- ====== CÀI ĐẶT ======
+getgenv().Hitbox = true
+getgenv().AutoClick = false
+getgenv().AutoFarm = false
 
-local function isShuttle(obj)
-    return obj:IsA("Part") 
-    and (obj.Name == "Shuttlecock" or obj.Name == "Shuttle" or obj.Name == "Ball")
+-- ====== TẠO GUI ======
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local UIListLayout = Instance.new("UIListLayout")
+
+ScreenGui.Parent = game.CoreGui
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0,150,0,150)
+Frame.Position = UDim2.new(0,20,0,100)
+Frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+
+UIListLayout.Parent = Frame
+
+-- ====== HÀM TẠO NÚT ======
+function createButton(text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1,0,0,40)
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(50,50,50)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Parent = Frame
+    
+    btn.MouseButton1Click:Connect(callback)
 end
 
-local function applyHitbox(obj)
-    if isShuttle(obj) then
-        obj.Size = hitboxSize
-        obj.Transparency = 0.5
-        obj.Material = Enum.Material.Neon
-        obj.BrickColor = BrickColor.new("Really red")
-        obj.CanCollide = false
+-- ====== NÚT ======
+createButton("Hitbox", function()
+    getgenv().Hitbox = not getgenv().Hitbox
+end)
+
+createButton("Auto Click", function()
+    getgenv().AutoClick = not getgenv().AutoClick
+end)
+
+createButton("Auto Farm", function()
+    getgenv().AutoFarm = not getgenv().AutoFarm
+end)
+
+-- ====== HITBOX 40 ======
+task.spawn(function()
+    while true do
+        if getgenv().Hitbox then
+            for _,v in pairs(game.Players:GetPlayers()) do
+                if v ~= game.Players.LocalPlayer then
+                    if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                        local part = v.Character.HumanoidRootPart
+                        part.Size = Vector3.new(40,40,40)
+                        part.Transparency = 0.5
+                        part.Material = "Neon"
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end
+        task.wait()
     end
-end
+end)
 
--- Áp dụng cho cầu hiện tại
-for _, v in pairs(workspace:GetDescendants()) do
-    applyHitbox(v)
-end
+-- ====== AUTO CLICK ======
+task.spawn(function()
+    while true do
+        if getgenv().AutoClick then
+            pcall(function()
+                mouse1click()
+            end)
+        end
+        task.wait(0.1)
+    end
+end)
 
--- Khi cầu spawn lại vẫn có hitbox
-workspace.DescendantAdded:Connect(function(v)
-    task.wait(0.1)
-    applyHitbox(v)
+-- ====== AUTO FARM ======
+task.spawn(function()
+    while true do
+        if getgenv().AutoFarm then
+            pcall(function()
+                local player = game.Players.LocalPlayer
+                if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame =
+                        player.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-5)
+                end
+            end)
+        end
+        task.wait(0.2)
+    end
 end)
