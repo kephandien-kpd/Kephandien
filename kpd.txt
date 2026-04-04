@@ -1,34 +1,47 @@
--- Auto Checkout Script
+-- Auto Checkout (Advanced)
 
 local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
 
--- Tìm quầy thanh toán (có thể cần chỉnh lại tên)
-local function getCheckout()
+-- Tìm RemoteEvent liên quan thanh toán
+local function findRemote()
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("RemoteEvent") then
+            if v.Name:lower():find("pay") 
+            or v.Name:lower():find("checkout") 
+            or v.Name:lower():find("cash") then
+                return v
+            end
+        end
+    end
+end
+
+-- Tìm quầy thu ngân
+local function findCheckout()
     for _, v in pairs(workspace:GetDescendants()) do
-        if v.Name:lower():find("checkout") or v.Name:lower():find("cashier") then
+        if v.Name:lower():find("checkout") 
+        or v.Name:lower():find("cashier") then
             return v
         end
     end
 end
 
--- Auto thanh toán
+local remote = findRemote()
+
 while task.wait(1) do
-    local checkout = getCheckout()
+    local char = player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
+
+    local checkout = findCheckout()
     
-    if checkout and character and character:FindFirstChild("HumanoidRootPart") then
-        -- Teleport đến quầy
-        character.HumanoidRootPart.CFrame = checkout.CFrame + Vector3.new(0, 3, 0)
-        
-        -- Giả lập bấm thanh toán
-        for _, v in pairs(checkout:GetDescendants()) do
-            if v:IsA("ClickDetector") then
-                fireclickdetector(v)
-            end
-            
-            if v:IsA("ProximityPrompt") then
-                fireproximityprompt(v)
-            end
-        end
+    if checkout then
+        -- Teleport tới quầy
+        char.HumanoidRootPart.CFrame = checkout.CFrame + Vector3.new(0,3,0)
+    end
+
+    -- Nếu có remote thì spam thanh toán
+    if remote then
+        pcall(function()
+            remote:FireServer()
+        end)
     end
 end
