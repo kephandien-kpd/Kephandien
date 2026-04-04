@@ -1,77 +1,98 @@
--- Auto Checkout GUI (Safe)
+-- AUTO CHECKOUT VIP
 
 local player = game.Players.LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
+local auto = false
 
 -- ===== GUI =====
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "AutoCheckoutGUI"
+gui.Name = "VIP_CHECKOUT"
 
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0,200,0,120)
+frame.Size = UDim2.new(0,220,0,130)
 frame.Position = UDim2.new(0,20,0,200)
-frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
 frame.Active = true
 frame.Draggable = true
 
-local toggle = Instance.new("TextButton", frame)
-toggle.Size = UDim2.new(1,0,0,50)
-toggle.Text = "Auto: OFF"
-toggle.BackgroundColor3 = Color3.fromRGB(60,60,60)
-toggle.TextColor3 = Color3.new(1,1,1)
+local btn = Instance.new("TextButton", frame)
+btn.Size = UDim2.new(1,0,0,50)
+btn.Text = "AUTO: OFF"
+btn.TextColor3 = Color3.new(1,1,1)
+btn.BackgroundColor3 = Color3.fromRGB(50,50,50)
 
-local stop = Instance.new("TextButton", frame)
-stop.Size = UDim2.new(1,0,0,50)
-stop.Position = UDim2.new(0,0,0,60)
-stop.Text = "STOP TP"
-stop.BackgroundColor3 = Color3.fromRGB(100,40,40)
-stop.TextColor3 = Color3.new(1,1,1)
+local info = Instance.new("TextLabel", frame)
+info.Size = UDim2.new(1,0,0,70)
+info.Position = UDim2.new(0,0,0,60)
+info.Text = "Chờ quầy thanh toán..."
+info.TextColor3 = Color3.new(1,1,1)
+info.BackgroundTransparency = 1
 
--- ===== Logic =====
-local auto = false
-local allowTP = true
-
-toggle.MouseButton1Click:Connect(function()
+btn.MouseButton1Click:Connect(function()
     auto = not auto
-    toggle.Text = auto and "Auto: ON" or "Auto: OFF"
+    btn.Text = auto and "AUTO: ON" or "AUTO: OFF"
 end)
 
-stop.MouseButton1Click:Connect(function()
-    allowTP = false
-end)
-
--- Tìm quầy
-local function findCheckout()
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v.Name:lower():find("checkout") 
-        or v.Name:lower():find("cashier") then
-            return v
+-- ===== Tìm tất cả tương tác =====
+local function interactAll()
+    for _, v in pairs(game:GetDescendants()) do
+        
+        -- ProximityPrompt
+        if v:IsA("ProximityPrompt") then
+            pcall(function()
+                fireproximityprompt(v)
+            end)
         end
+        
+        -- ClickDetector
+        if v:IsA("ClickDetector") then
+            pcall(function()
+                fireclickdetector(v)
+            end)
+        end
+        
+        -- RemoteEvent (thử tất cả)
+        if v:IsA("RemoteEvent") then
+            pcall(function()
+                v:FireServer()
+            end)
+        end
+        
     end
 end
 
--- ===== Loop =====
+-- ===== Loop chính =====
 task.spawn(function()
-    while task.wait(1) do
+    while task.wait(0.8) do
         if not auto then continue end
         
-        char = player.Character
+        local char = player.Character
         if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
         
-        local checkout = findCheckout()
+        -- Tìm quầy gần nhất
+        local closest, dist = nil, math.huge
         
-        if checkout and allowTP then
-            -- TP nhẹ tránh bug
-            char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame:Lerp(
-                checkout.CFrame + Vector3.new(0,3,0), 0.3
-            )
-        end
-        
-        -- Bấm thanh toán
         for _, v in pairs(workspace:GetDescendants()) do
-            if v:IsA("ProximityPrompt") then
-                fireproximityprompt(v)
+            if v:IsA("BasePart") and (
+                v.Name:lower():find("cash") or 
+                v.Name:lower():find("check") or 
+                v.Name:lower():find("pay")
+            ) then
+                local d = (char.HumanoidRootPart.Position - v.Position).Magnitude
+                if d < dist then
+                    dist = d
+                    closest = v
+                end
             end
         end
+        
+        -- Di chuyển an toàn (không bị kẹt)
+        if closest then
+            info.Text = "Đang đến quầy..."
+            char.Humanoid:MoveTo(closest.Position)
+        end
+        
+        -- Thử thanh toán
+        interactAll()
+        info.Text = "Đang thanh toán..."
     end
 end)
