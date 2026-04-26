@@ -1,104 +1,44 @@
--- VIP AUTO CHECKOUT + CHANGE (SMART)
-
 local player = game.Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0,180,0,60)
+button.Position = UDim2.new(0,20,0,100)
+button.Text = "AUTO: OFF"
+button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+button.Parent = gui
+
+-- trạng thái
 local auto = false
 
--- ===== GUI =====
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "VIP_MENU"
-
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0,230,0,150)
-frame.Position = UDim2.new(0,20,0,200)
-frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
-frame.Active = true
-frame.Draggable = true
-
-local toggle = Instance.new("TextButton", frame)
-toggle.Size = UDim2.new(1,0,0,50)
-toggle.Text = "AUTO: OFF"
-toggle.TextColor3 = Color3.new(1,1,1)
-toggle.BackgroundColor3 = Color3.fromRGB(50,50,50)
-
-local status = Instance.new("TextLabel", frame)
-status.Size = UDim2.new(1,0,0,90)
-status.Position = UDim2.new(0,0,0,60)
-status.Text = "Đang chờ..."
-status.TextColor3 = Color3.new(1,1,1)
-status.BackgroundTransparency = 1
-
-toggle.MouseButton1Click:Connect(function()
-    auto = not auto
-    toggle.Text = auto and "AUTO: ON" or "AUTO: OFF"
+-- nút bật/tắt
+button.MouseButton1Click:Connect(function()
+	auto = not auto
+	
+	if auto then
+		button.Text = "AUTO: ON"
+		button.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+	else
+		button.Text = "AUTO: OFF"
+		button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+	end
 end)
 
--- ===== Tìm quầy gần nhất =====
-local function getClosest()
-    local char = player.Character
-    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
-    
-    local closest, dist = nil, math.huge
-    
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("BasePart") and (
-            v.Name:lower():find("cash") or
-            v.Name:lower():find("check") or
-            v.Name:lower():find("pay")
-        ) then
-            local d = (char.HumanoidRootPart.Position - v.Position).Magnitude
-            if d < dist then
-                dist = d
-                closest = v
-            end
-        end
-    end
-    
-    return closest
-end
-
--- ===== Tương tác =====
-local function interact()
-    for _, v in pairs(game:GetDescendants()) do
-        
-        if v:IsA("ProximityPrompt") then
-            pcall(function()
-                fireproximityprompt(v)
-            end)
-        end
-        
-        if v:IsA("ClickDetector") then
-            pcall(function()
-                fireclickdetector(v)
-            end)
-        end
-        
-        if v:IsA("RemoteEvent") then
-            pcall(function()
-                -- thử nhiều kiểu (có cả "tiền thừa")
-                v:FireServer(50)
-                v:FireServer(50, 20)
-                v:FireServer(50, 20, 30)
-            end)
-        end
-    end
-end
-
--- ===== LOOP =====
+-- auto cộng tiền
 task.spawn(function()
-    while task.wait(0.7) do
-        if not auto then continue end
-        
-        local char = player.Character
-        if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
-        
-        local target = getClosest()
-        
-        if target then
-            status.Text = "Đang tới quầy..."
-            char.Humanoid:MoveTo(target.Position)
-        end
-        
-        status.Text = "Đang xử lý thanh toán..."
-        interact()
-    end
+	while true do
+		if auto then
+			local stats = player:FindFirstChild("leaderstats")
+			if stats then
+				local money = stats:FindFirstChild("Money") or stats:FindFirstChild("Cash")
+				if money then
+					money.Value = money.Value + 500
+				end
+			end
+		end
+		task.wait(0.1)
+	end
 end)
